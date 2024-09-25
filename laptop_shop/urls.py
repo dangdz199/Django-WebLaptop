@@ -10,12 +10,8 @@ urlpatterns = [
     path('laptops/', laptop_list, name='laptop_list'),
     path('laptops/<int:pk>/', laptop_detail, name='laptop_detail'),  # URL for laptop detail
 ]
-<<<<<<< HEAD
 #fafdf
 #thadsf
-=======
-
->>>>>>> 64e2110bea3a3e4251e6d45dca2a7e16274061d8
 # Serve media files in development mode
 from django.conf import settings
 from django.conf.urls.static import static
