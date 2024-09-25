@@ -1,15 +1,21 @@
 from django.contrib import admin
 from django.urls import path
-from products.views import laptop_list, laptop_detail
+from products.views import laptop_list, laptop_detail, index, contact, about
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', laptop_list, name='laptop_list'),  # Home page
-    path('laptops/', laptop_list, name='laptop_list'),  # URL for laptop listing
+    path('', index, name='home'),  # Home page
+    path('contact', contact, name='contact'),  # Home page
+    path('about', about, name='about'),  # Home page
+    path('laptops/', laptop_list, name='laptop_list'),
     path('laptops/<int:pk>/', laptop_detail, name='laptop_detail'),  # URL for laptop detail
 ]
+<<<<<<< HEAD
 #fafdf
 #thadsf
+=======
+
+>>>>>>> 64e2110bea3a3e4251e6d45dca2a7e16274061d8
 # Serve media files in development mode
 from django.conf import settings
 from django.conf.urls.static import static
