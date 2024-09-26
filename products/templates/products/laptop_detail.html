@@ -11,22 +11,24 @@
   </nav>
 
   <div class="row">
-    <!-- Cột bên trái: Ảnh chính -->
-    <div class="col-md-12 mb-4">
-      <!-- Carousel for main images -->
+    <!-- Cột bên phải: Ảnh chính và thông tin sản phẩm -->
+    <div class="col-md-7">
+      <!-- Carousel for main and additional images -->
       <div id="laptopCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Main image carousel -->
         <div class="carousel-inner">
           <!-- Main image as the first carousel item -->
           <div class="carousel-item active">
-            <img src="{{ laptop.image.url }}" class="d-block w-100" alt="{{ laptop.name }}">
+            <img src="{{ laptop.image.url }}" class="d-block w-100 img-fluid" style="height: 400px; object-fit: cover;" alt="{{ laptop.name }}">
           </div>
           <!-- Loop through additional images and add them as carousel items -->
           {% for image in laptop.images.all %}
           <div class="carousel-item">
-            <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ laptop.name }} - additional image">
+            <img src="{{ image.image.url }}" class="d-block w-100 img-fluid" style="height: 400px; object-fit: cover;" alt="{{ laptop.name }} - additional image">
           </div>
           {% endfor %}
         </div>
+
         <!-- Carousel controls -->
         <a class="carousel-control-prev" href="#laptopCarousel" role="button" data-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -37,10 +39,29 @@
           <span class="sr-only">Next</span>
         </a>
       </div>
+
+      <!-- Thumbnails below the main image -->
+      <div class="row mt-3 justify-content-center">
+        <!-- First thumbnail for main image -->
+        <div class="p-1">
+          <a href="#laptopCarousel" data-slide-to="0">
+            <img src="{{ laptop.image.url }}" class="img-thumbnail mx-auto d-block" style="height: 80px; width: 80px; object-fit: cover;" alt="{{ laptop.name }}">
+          </a>
+        </div>
+
+        <!-- Loop through additional images and create thumbnails -->
+        {% for image in laptop.images.all %}
+        <div class="p-1">
+          <a href="#laptopCarousel" data-slide-to="{{ forloop.counter }}">
+            <img src="{{ image.image.url }}" class="img-thumbnail mx-auto d-block" style="height: 80px; width: 80px; object-fit: cover;" alt="{{ laptop.name }} - thumbnail">
+          </a>
+        </div>
+        {% endfor %}
+      </div>
     </div>
 
-    <!-- Cột bên phải: Thông tin sản phẩm -->
-    <div class="col-md-12">
+    <!-- Cột bên trái: Thông tin sản phẩm -->
+    <div class="col-md-5">
       <div class="card mb-4">
         <div class="card-body">
           <h2 class="card-title">{{ laptop.name }}</h2>
@@ -60,22 +81,6 @@
           <!-- Back to products button -->
           <a href="{% url 'laptop_list' %}" class="btn btn-primary mt-3">Back to Product List</a>
         </div>
-      </div>
-    </div>
-
-    <!-- Additional Images Section -->
-    <div class="col-md-12">
-      <h4>Additional Images</h4>
-      <div class="row">
-        {% for image in laptop.images.all %}
-        <div class="col-md-3 mb-3">
-          <a href="#" onclick="document.getElementById('mainImage').src='{{ image.image.url }}'; return false;">
-            <img src="{{ image.image.url }}" class="img-fluid" alt="{{ laptop.name }} - additional image" style="cursor: pointer;">
-          </a>
-        </div>
-        {% empty %}
-        <p>No additional images available for this product.</p>
-        {% endfor %}
       </div>
     </div>
   </div>
