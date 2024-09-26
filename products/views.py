@@ -1,6 +1,14 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Laptop
 from django.db.models import Q
+
+def add_to_cart(request, laptop_id):
+    cart = request.session.get('cart', [])  # Retrieve the cart from session, default to an empty list
+    if laptop_id not in cart:
+        cart.append(laptop_id)  # Add the laptop to the cart if it's not already there
+    request.session['cart'] = cart  # Save the updated cart back to the session
+    return redirect('cart')  # Redirect to the cart page
+
 
 def laptop_list(request):
     laptops = Laptop.objects.all()
