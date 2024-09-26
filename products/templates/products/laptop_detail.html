@@ -11,9 +11,9 @@
   </nav>
 
   <div class="row">
-    <!-- Cột bên trái: Hình ảnh phụ -->
-    <div class="col-md-9">
-      <!-- Carousel for main and additional images -->
+    <!-- Cột bên trái: Ảnh chính -->
+    <div class="col-md-12 mb-4">
+      <!-- Carousel for main images -->
       <div id="laptopCarousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
           <!-- Main image as the first carousel item -->
@@ -40,7 +40,7 @@
     </div>
 
     <!-- Cột bên phải: Thông tin sản phẩm -->
-    <div class="col-md-3">
+    <div class="col-md-12">
       <div class="card mb-4">
         <div class="card-body">
           <h2 class="card-title">{{ laptop.name }}</h2>
@@ -60,6 +60,22 @@
           <!-- Back to products button -->
           <a href="{% url 'laptop_list' %}" class="btn btn-primary mt-3">Back to Product List</a>
         </div>
+      </div>
+    </div>
+
+    <!-- Additional Images Section -->
+    <div class="col-md-12">
+      <h4>Additional Images</h4>
+      <div class="row">
+        {% for image in laptop.images.all %}
+        <div class="col-md-3 mb-3">
+          <a href="#" onclick="document.getElementById('mainImage').src='{{ image.image.url }}'; return false;">
+            <img src="{{ image.image.url }}" class="img-fluid" alt="{{ laptop.name }} - additional image" style="cursor: pointer;">
+          </a>
+        </div>
+        {% empty %}
+        <p>No additional images available for this product.</p>
+        {% endfor %}
       </div>
     </div>
   </div>
