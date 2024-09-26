@@ -25,7 +25,21 @@
       <!-- Additional product details -->
       <p class="card-text"><strong>Specifications:</strong> {{ laptop.specifications }}</p>
       <p class="card-text"><strong>Availability:</strong> {{ laptop.stock }} in stock</p>
-      
+
+      <!-- Thêm phần hiển thị nhiều ảnh -->
+      <div class="additional-images mt-4">
+        <h4>Additional Images</h4>
+        <div class="row">
+          {% for image in laptop.images.all %}
+          <div class="col-md-4 mb-3">
+            <img src="{{ image.image.url }}" class="img-fluid" alt="{{ laptop.name }} - additional image">
+          </div>
+          {% empty %}
+          <p>No additional images available for this product.</p>
+          {% endfor %}
+        </div>
+      </div>
+
       <!-- Add to cart button -->
       <form action="{% url 'add_to_cart' laptop.id %}" method="POST">
         {% csrf_token %}
