@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path
-from products.views import laptop_list, laptop_detail, index, contact, about
+from products.views import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -9,12 +11,9 @@ urlpatterns = [
     path('about', about, name='about'),  # Home page
     path('laptops/', laptop_list, name='laptop_list'),
     path('laptops/<int:pk>/', laptop_detail, name='laptop_detail'),  # URL for laptop detail
+    path('add-to-cart/<int:laptop_id>/', add_to_cart, name='add_to_cart'),
+    
 ]
-#fafdf
-#thadsf
-# Serve media files in development mode
-from django.conf import settings
-from django.conf.urls.static import static
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
