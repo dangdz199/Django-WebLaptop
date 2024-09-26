@@ -1,50 +1,89 @@
 {% include 'products/header.html' %}
+
 <!-- Main content -->
 <main class="container my-5">
-  <h2 class="text-center mb-4">Danh sách laptop</h2>
+  <h2 class="text-center mb-4">Danh sách Laptop</h2>
   
-  <!-- Form tìm kiếm, lọc và sắp xếp -->
+  <!-- Search, Filter, and Sort Form -->
   <form method="get" class="mb-4">
-      <div class="form-row">
-          <div class="col">
-              <input type="text" class="form-control" name="search_query" value="{{ search_query }}" placeholder="Tìm kiếm theo tên">
-          </div>
-          <div class="col">
-              <input type="number" class="form-control" name="min_price" value="{{ min_price }}" placeholder="Giá tối thiểu">
-          </div>
-          <div class="col">
-              <input type="number" class="form-control" name="max_price" value="{{ max_price }}" placeholder="Giá tối đa">
-          </div>
-          <div class="col">
-              <select class="form-control" name="sort_order">
-                  <option value="">Sắp xếp giá</option>
-                  <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Tăng dần</option>
-                  <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Giảm dần</option>
-              </select>
-          </div>
-          <div class="col">
-              <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-          </div>
+    <div class="form-row">
+      <div class="col-md-3 col-sm-6 mb-2">
+        <input type="text" class="form-control" name="search_query" value="{{ search_query }}" placeholder="Tìm kiếm theo tên">
       </div>
+      <div class="col-md-2 col-sm-6 mb-2">
+        <input type="number" class="form-control" name="min_price" value="{{ min_price }}" placeholder="Giá tối thiểu">
+      </div>
+      <div class="col-md-2 col-sm-6 mb-2">
+        <input type="number" class="form-control" name="max_price" value="{{ max_price }}" placeholder="Giá tối đa">
+      </div>
+      <div class="col-md-2 col-sm-6 mb-2">
+        <select class="form-control" name="sort_order">
+          <option value="">Sắp xếp theo giá</option>
+          <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Tăng dần</option>
+          <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Giảm dần</option>
+        </select>
+      </div>
+      <div class="col-md-2 col-sm-6 mb-2">
+        <button type="submit" class="btn btn-primary btn-block">Tìm kiếm</button>
+      </div>
+      <div class="col-md-1 col-sm-6 mb-2">
+        <a href="{% url 'laptop_list' %}" class="btn btn-secondary btn-block">Xóa bộ lọc</a>
+      </div>
+    </div>
   </form>
 
+  <!-- Loading state if no laptops are available -->
+  {% if is_loading %}
+  <p class="text-center">Đang tải dữ liệu, vui lòng chờ...</p>
+  {% endif %}
+  
+  <!-- Laptop Grid -->
   <div class="row">
     {% for laptop in laptops %}
-    <div class="col-md-4 mb-4">
-      <!-- Card for each laptop -->
-      <div class="card">
-        <img src="{{ laptop.image.url }}" class="card-img-top" alt="{{ laptop.name }}" />
+    <div class="col-md-4 col-sm-6 mb-4">
+      <div class="card h-100">
+        <img src="{{ laptop.image.url }}" class="card-img-top" alt="{{ laptop.name }}">
         <div class="card-body">
           <h5 class="card-title">{{ laptop.name }}</h5>
-          <p class="card-text">{{ laptop.description }}</p>
+          <p class="card-text">{{ laptop.description|truncatewords:20 }}</p>
           <p class="card-text"><strong>Giá: {{ laptop.price }} VND</strong></p>
-          <a href="{% url 'laptop_detail' laptop.pk %}" class="btn btn-primary">Chi tiết</a>
+          <a href="{% url 'laptop_detail' laptop.pk %}" class="btn btn-primary btn-block">Xem chi tiết</a>
         </div>
       </div>
     </div>
     {% empty %}
-    <p class="text-center">Không tìm thấy laptop nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc của bạn.</p>
+    <p class="text-center col-12">Không tìm thấy laptop nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc của bạn.</p>
     {% endfor %}
   </div>
+
+  <!-- Pagination -->
+  <div class="pagination justify-content-center mt-4">
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        {% if laptops.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ laptops.previous_page_number }}&search_query={{ search_query }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        {% endif %}
+        
+        {% for page_num in laptops.paginator.page_range %}
+        <li class="page-item {% if laptops.number == page_num %}active{% endif %}">
+          <a class="page-link" href="?page={{ page_num }}&search_query={{ search_query }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}">{{ page_num }}</a>
+        </li>
+        {% endfor %}
+        
+        {% if laptops.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ laptops.next_page_number }}&search_query={{ search_query }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
 </main>
+
 {% include 'products/footer.html' %}

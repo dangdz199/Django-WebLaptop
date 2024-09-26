@@ -1,6 +1,16 @@
 {% include 'products/header.html' %}
 <!-- Main content -->
 <main class="container my-5">
+  <!-- Breadcrumb navigation -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/products/">Laptops</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ laptop.name }}</li>
+    </ol>
+  </nav>
+
+  <!-- Product Card -->
   <div class="card mb-4">
     <img
       src="{{ laptop.image.url }}"
@@ -10,10 +20,35 @@
     <div class="card-body">
       <h2 class="card-title">{{ laptop.name }}</h2>
       <p class="card-text">{{ laptop.description }}</p>
-      <p class="card-text"><strong>Giá: {{ laptop.price }} VND</strong></p>
-      <!-- Thêm các chi tiết khác nếu cần -->
-      <a href="/" class="btn btn-primary">Quay lại danh sách sản phẩm</a>
+      <p class="card-text"><strong>Price: {{ laptop.price }} VND</strong></p>
+
+      <!-- Additional product details -->
+      <p class="card-text"><strong>Specifications:</strong> {{ laptop.specifications }}</p>
+      <p class="card-text"><strong>Availability:</strong> {{ laptop.stock }} in stock</p>
+      
+      <!-- Add to cart button -->
+      <form action="{% url 'add_to_cart' laptop.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Add to Cart</button>
+      </form>
+
+      <!-- Back to products button -->
+      <a href="/products/" class="btn btn-primary mt-3">Back to Product List</a>
     </div>
+  </div>
+
+  <!-- Customer Reviews Section -->
+  <div class="reviews-section mt-5">
+    <h4>Customer Reviews</h4>
+    {% for review in laptop.reviews.all %}
+    <div class="review">
+      <p><strong>{{ review.user.username }}</strong> rated this {{ review.rating }}/5</p>
+      <p>{{ review.comment }}</p>
+      <hr>
+    </div>
+    {% empty %}
+    <p>No reviews yet. Be the first to review this product!</p>
+    {% endfor %}
   </div>
 </main>
 {% include 'products/footer.html' %}
