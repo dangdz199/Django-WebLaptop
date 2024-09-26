@@ -16,7 +16,9 @@
       <div class="additional-images">
         {% for image in laptop.images.all|slice:":3" %}
         <div class="mb-3">
-          <img src="{{ image.image.url }}" class="img-fluid" alt="{{ laptop.name }} - additional image">
+          <a href="#" onclick="document.getElementById('mainImage').src='{{ image.image.url }}'; return false;">
+            <img src="{{ image.image.url }}" class="img-fluid" alt="{{ laptop.name }} - additional image">
+          </a>
         </div>
         {% empty %}
         <p>No additional images available for this product.</p>
@@ -28,6 +30,7 @@
     <div class="col-md-9">
       <div class="card mb-4">
         <img
+          id="mainImage"
           src="{{ laptop.image.url }}"
           class="card-img-top"
           alt="{{ laptop.name }}"
