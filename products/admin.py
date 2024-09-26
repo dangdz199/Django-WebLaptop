@@ -4,7 +4,7 @@ from .models import Laptop, ProductImages
 # Tạo Inline cho ProductImages để hiển thị hình ảnh phụ trong trang Laptop
 class ProductImagesInline(admin.TabularInline):
     model = ProductImages
-    extra = 1  # Số lượng form trống để thêm hình ảnh mới
+    extra = 3 # Số lượng form trống để thêm hình ảnh mới
 
 # Tùy chỉnh hiển thị model Laptop
 class LaptopAdmin(admin.ModelAdmin):
