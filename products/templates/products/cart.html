@@ -12,15 +12,28 @@
                 <th>Số lượng</th>
                 <th>Giá</th>
                 <th>Tổng cộng</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
             {% for item in order.items.all %}
             <tr>
                 <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
+                <td>
+                    <form action="#" method="POST" class="form-inline">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control w-50">
+                        <button type="submit" class="btn btn-warning btn-sm ml-2"><i class="fas fa-edit"></i> Cập nhật</button>
+                    </form>
+                </td>
                 <td>{{ item.product.price }} VND</td>
                 <td>{{ item.get_total_price }} VND</td>
+                <td>
+                    <form action="#" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Xóa</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -28,7 +41,7 @@
 
     <div class="text-right">
         <p><strong>Tổng cộng: {{ order.total_price }} VND</strong></p>
-        <a href="#" class="btn btn-success">Thanh toán</a>
+        <a href="#" class="btn btn-success"><i class="fas fa-check-circle"></i> Thanh toán</a>
     </div>
 
     {% else %}

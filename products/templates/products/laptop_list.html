@@ -1,8 +1,7 @@
 {% include 'products/header.html' %}
-
+{% comment %} laptop_list.html {% endcomment %}
 <!-- Main content -->
 <main class="container my-5">
-  <h2 class="text-center mb-4">Danh sách Laptop</h2>
   
   <!-- Search, Filter, and Sort Form -->
   <form method="get" class="mb-4">
@@ -24,17 +23,17 @@
         </select>
       </div>
       <div class="col-md-2 col-sm-6 mb-2">
-        <button type="submit" class="btn btn-primary btn-block">Tìm kiếm</button>
+        <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-search"></i> Tìm kiếm</button>
       </div>
       <div class="col-md-1 col-sm-6 mb-2">
-        <a href="{% url 'laptop_list' %}" class="btn btn-secondary btn-block">Xóa bộ lọc</a>
+        <a href="{% url 'laptop_list' %}" class="btn btn-secondary btn-block"><i class="fas fa-eraser"></i> Xóa bộ lọc</a>
       </div>
     </div>
   </form>
 
   <!-- Loading state if no laptops are available -->
   {% if is_loading %}
-  <p class="text-center">Đang tải dữ liệu, vui lòng chờ...</p>
+  <p class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu, vui lòng chờ...</p>
   {% endif %}
   
   <!-- Laptop Grid -->
@@ -46,8 +45,8 @@
         <div class="card-body">
           <h5 class="card-title">{{ laptop.name }}</h5>
           <p class="card-text">{{ laptop.description|truncatewords:20 }}</p>
-          <p class="card-text"><strong>Giá: {{ laptop.price }} VND</strong></p>
-          <a href="{% url 'laptop_detail' laptop.pk %}" class="btn btn-primary btn-block">Xem chi tiết</a>
+          <p class="card-text"><strong><i class="fas fa-money-bill-wave"></i> Giá: {{ laptop.price }} VND</strong></p>
+          <a href="{% url 'laptop_detail' laptop.pk %}" class="btn btn-primary btn-block"><i class="fas fa-info-circle"></i> Xem chi tiết</a>
         </div>
       </div>
     </div>
@@ -63,7 +62,7 @@
         {% if laptops.has_previous %}
         <li class="page-item">
           <a class="page-link" href="?page={{ laptops.previous_page_number }}&search_query={{ search_query }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
+            <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
           </a>
         </li>
         {% endif %}
@@ -77,7 +76,7 @@
         {% if laptops.has_next %}
         <li class="page-item">
           <a class="page-link" href="?page={{ laptops.next_page_number }}&search_query={{ search_query }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
+            <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
           </a>
         </li>
         {% endif %}
