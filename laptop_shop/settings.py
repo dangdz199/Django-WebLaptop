@@ -121,6 +121,10 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# settings.py
+TAX_RATE = 0.1  # Ví dụ: 10% thuế
+DISCOUNT_THRESHOLD = 1000000  # Ngưỡng giảm giá (1 triệu VND)
+DISCOUNT_RATE = 0.1  # Ví dụ: 10% giảm giá
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

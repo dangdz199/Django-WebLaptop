@@ -3,22 +3,6 @@ from django.db.models import Q
 
 from .models import Laptop, Order, OrderItem
 
-def cart_view(request):
-    order = Order.objects.filter(user=request.user, completed=False).first()
-    if order:
-        # Calculate the total price of the items in the cart
-        total_price = sum(item.get_total_price for item in order.items.all())
-    else:
-        order = None
-        total_price = 0
-
-    context = {
-        'order': order,
-        'total_price': total_price,
-    }
-
-    return render(request, 'products/cart.html', context)
-
 
 def add_to_cart(request, laptop_id):
     laptop = get_object_or_404(Laptop, pk=laptop_id)
@@ -47,6 +31,13 @@ def remove_cart_item(request, item_id):
     order_item = get_object_or_404(OrderItem, pk=item_id)
     order_item.delete()  # Xóa sản phẩm khỏi giỏ hàng
     return redirect('cart')
+
+def cart_view(request):
+    order = Order.objects.filter(user=request.user, completed=False).first()
+    context = {
+        'order': order,
+    }
+    return render(request, 'products/cart.html', context)
 
 def laptop_list(request):
     laptops = Laptop.objects.all()

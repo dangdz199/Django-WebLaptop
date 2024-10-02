@@ -35,7 +35,7 @@ class Order(models.Model):
         # Tính tổng giá trị tất cả các sản phẩm trong đơn hàng
         total = sum([item.get_total_price for item in self.items.all()])
         # Áp dụng thuế từ cấu hình settings
-        total_with_tax = total * (1 + settings.TAX_RATE)
+        total_with_tax = total #* (1 + settings.TAX_RATE)
         return total_with_tax
 
     def apply_discount(self):
