@@ -3,23 +3,8 @@ from django.db.models import Q
 
 from .models import Laptop, Order, OrderItem
 
-def add_to_cart(request, laptop_id):
-    laptop = get_object_or_404(Laptop, pk=laptop_id)
-    order, created = Order.objects.get_or_create(user=request.user, completed=False)
-    
-    # Check if the laptop is already in the order
-    order_item, created = OrderItem.objects.get_or_create(order=order, product=laptop)
-    if not created:
-        # If the item is already in the cart, increase the quantity
-        order_item.quantity += 1
-        order_item.save()
-    
-    return redirect('laptop_detail', pk=laptop_id)
-
 def cart_view(request):
-    # Get the current user's order that is not completed
     order = Order.objects.filter(user=request.user, completed=False).first()
-
     if order:
         # Calculate the total price of the items in the cart
         total_price = sum(item.get_total_price for item in order.items.all())
@@ -33,6 +18,35 @@ def cart_view(request):
     }
 
     return render(request, 'products/cart.html', context)
+
+
+def add_to_cart(request, laptop_id):
+    laptop = get_object_or_404(Laptop, pk=laptop_id)
+    order, created = Order.objects.get_or_create(user=request.user, completed=False)
+    
+    # Check if the laptop is already in the order
+    order_item, created = OrderItem.objects.get_or_create(order=order, product=laptop)
+    if not created:
+        # If the item is already in the cart, increase the quantity
+        order_item.quantity += 1
+        order_item.save()
+    
+    return redirect('laptop_detail', pk=laptop_id)
+
+def update_cart_item(request, item_id):
+    order_item = get_object_or_404(OrderItem, pk=item_id)
+    
+    if request.method == "POST":
+        quantity = request.POST.get('quantity', 1)
+        order_item.quantity = max(1, int(quantity))  # Đảm bảo số lượng không nhỏ hơn 1
+        order_item.save()
+    
+    return redirect('cart')
+
+def remove_cart_item(request, item_id):
+    order_item = get_object_or_404(OrderItem, pk=item_id)
+    order_item.delete()  # Xóa sản phẩm khỏi giỏ hàng
+    return redirect('cart')
 
 def laptop_list(request):
     laptops = Laptop.objects.all()
