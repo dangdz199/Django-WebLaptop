@@ -11,36 +11,38 @@
 <body>
     
 <!-- Header -->
-<header class="bg-dark text-white p-3">
+<header class="bg-dark text-white p-2">
     <div class="container">
         <h1 class="text-center"><i class="fas fa-laptop"></i> Laptop Shop</h1>
     </div>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-3">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}"><i class="fas fa-home"></i> Laptop Shop</a>
+            {% comment %} <a class="navbar-brand" href="{% url 'home' %}"><i class="fas fa-home"></i> Laptop Shop</a> {% endcomment %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
+                <ul class="navbar-nav mr-auto">  <!-- Giữ lại để các mục khác nằm bên trái -->
+                    <li class="nav-item {% if request.path == '/' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Trang chủ</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item {% if request.path == '/laptops/' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'laptop_list' %}"><i class="fas fa-laptop"></i> Sản phẩm</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item {% if request.path == '/contact' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'contact' %}"><i class="fas fa-envelope"></i> Liên hệ</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item {% if request.path == '/about' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> Giới thiệu</a>
                     </li>
-                    <a href="{% url 'cart' %}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Giỏ hàng</a>
                 </ul>
+                <a href="{% url 'cart' %}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Giỏ hàng</a> <!-- Giỏ hàng ở bên phải -->
             </div>
         </div>
     </nav>
 </header>
+
+
 {% comment %} Kết thúc {% endcomment %}
