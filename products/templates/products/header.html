@@ -1,42 +1,46 @@
+{% comment %} Đây là file header {% endcomment %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laptop Shop</title>
+    <title>Giỏ Hàng - Laptop Shop</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"> <!-- Thêm Font Awesome -->
 </head>
 <body>
     
 <!-- Header -->
 <header class="bg-dark text-white p-3">
     <div class="container">
-        <h1 class="text-center">Laptop Shop</h1>
+        <h1 class="text-center"><i class="fas fa-laptop"></i> Laptop Shop</h1>
     </div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">Laptop Shop</a>
+            <a class="navbar-brand" href="{% url 'home' %}"><i class="fas fa-home"></i> Laptop Shop</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'home' %}">Trang chủ</a>
+                        <a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Trang chủ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'laptop_list' %}">Sản phẩm</a>
+                        <a class="nav-link" href="{% url 'laptop_list' %}"><i class="fas fa-laptop"></i> Sản phẩm</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contact' %}">Liên hệ</a>
+                        <a class="nav-link" href="{% url 'contact' %}"><i class="fas fa-envelope"></i> Liên hệ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' %}">Giới thiệu</a>
+                        <a class="nav-link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> Giới thiệu</a>
                     </li>
+                    <a href="{% url 'cart' %}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Giỏ hàng</a>
                 </ul>
             </div>
         </div>
     </nav>
 </header>
+{% comment %} Kết thúc {% endcomment %}

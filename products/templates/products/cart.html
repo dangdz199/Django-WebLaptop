@@ -1,0 +1,39 @@
+{% include 'products/header.html' %}
+
+<main class="container my-5">
+    <h2 class="text-center mb-4">Giỏ hàng của bạn</h2>
+    
+    <!-- Kiểm tra xem giỏ hàng có sản phẩm hay không -->
+    {% if order and order.items.all %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Tổng cộng</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.product.price }} VND</td>
+                <td>{{ item.get_total_price }} VND</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="text-right">
+        <p><strong>Tổng cộng: {{ order.total_price }} VND</strong></p>
+        <a href="#" class="btn btn-success">Thanh toán</a>
+    </div>
+
+    {% else %}
+    <p class="text-center">Giỏ hàng của bạn trống.</p>
+    {% endif %}
+</main>
+
+{% include 'products/footer.html' %}

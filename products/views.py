@@ -1,14 +1,38 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Laptop
 from django.db.models import Q
 
-def add_to_cart(request, laptop_id):
-    cart = request.session.get('cart', [])  # Retrieve the cart from session, default to an empty list
-    if laptop_id not in cart:
-        cart.append(laptop_id)  # Add the laptop to the cart if it's not already there
-    request.session['cart'] = cart  # Save the updated cart back to the session
-    return redirect('cart')  # Redirect to the cart page
+from .models import Laptop, Order, OrderItem
 
+def add_to_cart(request, laptop_id):
+    laptop = get_object_or_404(Laptop, pk=laptop_id)
+    order, created = Order.objects.get_or_create(user=request.user, completed=False)
+    
+    # Check if the laptop is already in the order
+    order_item, created = OrderItem.objects.get_or_create(order=order, product=laptop)
+    if not created:
+        # If the item is already in the cart, increase the quantity
+        order_item.quantity += 1
+        order_item.save()
+    
+    return redirect('laptop_detail', pk=laptop_id)
+
+def cart_view(request):
+    # Get the current user's order that is not completed
+    order = Order.objects.filter(user=request.user, completed=False).first()
+
+    if order:
+        # Calculate the total price of the items in the cart
+        total_price = sum(item.get_total_price for item in order.items.all())
+    else:
+        order = None
+        total_price = 0
+
+    context = {
+        'order': order,
+        'total_price': total_price,
+    }
+
+    return render(request, 'products/cart.html', context)
 
 def laptop_list(request):
     laptops = Laptop.objects.all()

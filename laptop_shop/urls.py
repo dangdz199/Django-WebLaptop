@@ -12,7 +12,7 @@ urlpatterns = [
     path('laptops/', laptop_list, name='laptop_list'),
     path('laptops/<int:pk>/', laptop_detail, name='laptop_detail'),  # URL for laptop detail
     path('add-to-cart/<int:laptop_id>/', add_to_cart, name='add_to_cart'),
-    
+    path('cart/', cart_view, name='cart')
 ]
 
 if settings.DEBUG:
