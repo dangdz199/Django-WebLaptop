@@ -27,18 +27,26 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
 
+    # Thông tin khách hàng
+    customer_name = models.CharField(max_length=255)
+    customer_email = models.EmailField(null=True, blank=True)
+    customer_phone = models.CharField(max_length=15, null=True, blank=True)
+    shipping_address = models.TextField()
+
     def __str__(self):
         return f"Order {self.id}"
 
     @property
     def get_total_price(self):
-        # Tính tổng giá trị tất cả các sản phẩm trong đơn hàng
         total = sum([item.get_total_price for item in self.items.all()])
-        # Áp dụng thuế từ cấu hình settings
-        total_with_tax = total #* (1 + settings.TAX_RATE)
-        return total_with_tax
+        return total
 
     def apply_discount(self):
+        total = self.get_total_price
+        if total > settings.DISCOUNT_THRESHOLD:
+            total_with_discount = total * (1 - settings.DISCOUNT_RATE)
+            return total_with_discount
+        return total
         # Tính tổng giá trị sau thuế
         total = self.get_total_price
         # Nếu tổng giá trị vượt qua ngưỡng giảm giá, áp dụng giảm giá

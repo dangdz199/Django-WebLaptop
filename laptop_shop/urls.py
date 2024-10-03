@@ -15,8 +15,9 @@ urlpatterns = [
     path('cart/update-cart-item/<int:item_id>/', update_cart_item, name='update_cart_item'),  # Cập nhật
     path('cart/remove-cart-item/<int:item_id>/', remove_cart_item, name='remove_cart_item'),  # Xóa
     path('cart/', cart_view, name='cart'),  # Xem giỏ hàng
+    path('other/', orders, name='orders'),  # Xem giỏ hàng
     
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# if settings.DEBUG:
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

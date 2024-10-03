@@ -38,7 +38,12 @@
                         <a class="nav-link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> Giới thiệu</a>
                     </li>
                 </ul>
-                <a href="{% url 'cart' %}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Giỏ hàng</a> <!-- Giỏ hàng ở bên phải -->
+                <a href="{% url 'cart' %}" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i> Giỏ hàng 
+                    {% if cart_item_count > 0 %}
+                        <span class="badge badge-light">{{ cart_item_count }}</span>
+                    {% endif %}
+                </a>
             </div>
         </div>
     </nav>

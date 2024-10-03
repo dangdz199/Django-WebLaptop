@@ -41,7 +41,7 @@
 
     <div class="text-right">
         <p><strong>Tổng cộng: {{ order.get_total_price }} VND</strong></p>
-        <a href="#" class="btn btn-success"><i class="fas fa-check-circle"></i> Thanh toán</a>
+        <a href="{% url 'orders' %}" class="btn btn-success"><i class="fas fa-check-circle"></i> Thanh toán</a>
     </div>
 
     {% else %}
