@@ -19,12 +19,11 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-3">
         <div class="container">
-            {% comment %} <a class="navbar-brand" href="{% url 'home' %}"><i class="fas fa-home"></i> Laptop Shop</a> {% endcomment %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mr-auto">  <!-- Giữ lại để các mục khác nằm bên trái -->
+                <ul class="navbar-nav mr-auto">
                     <li class="nav-item {% if request.path == '/' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Trang chủ</a>
                     </li>
@@ -38,16 +37,33 @@
                         <a class="nav-link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> Giới thiệu</a>
                     </li>
                 </ul>
-                <a href="{% url 'cart' %}" class="btn btn-primary">
+
+                {% if user.is_authenticated %}
+                <span class="navbar-text mr-2">Xin chào, {{ user.username }}!</span>
+                <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-light ml-2">Đăng Xuất</button>
+                </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light">
+                        <i class="fas fa-sign-in-alt"></i> Đăng Nhập
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-light ml-2">Đăng Ký</a>
+                {% endif %}
+            
+
+                {% if request.path != '/cart/' %}
+                <a href="{% url 'cart' %}" class="btn btn-primary ml-2">
                     <i class="fas fa-shopping-cart"></i> Giỏ hàng 
                     {% if cart_item_count > 0 %}
                         <span class="badge badge-light">{{ cart_item_count }}</span>
                     {% endif %}
                 </a>
+                {% endif %}
             </div>
         </div>
     </nav>
-</header>
 
+</header>
 
 {% comment %} Kết thúc {% endcomment %}

@@ -1,0 +1,38 @@
+{% include 'products/header.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Đăng Ký Tài Khoản</h2>
+
+    {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" class="w-50 mx-auto">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">Tên đăng nhập</label>
+            <input type="text" class="form-control" id="id_username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="id_email">Email</label>
+            <input type="email" class="form-control" id="id_email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="id_password1">Mật khẩu</label>
+            <input type="password" class="form-control" id="id_password1" name="password1" required>
+        </div>
+        <div class="form-group">
+            <label for="id_password2">Nhập lại mật khẩu</label>
+            <input type="password" class="form-control" id="id_password2" name="password2" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Đăng Ký</button>
+    </form>
+</div>
+{% endblock %}
+
+{% include 'products/footer.html' %}

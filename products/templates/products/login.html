@@ -1,0 +1,25 @@
+{% include 'products/header.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Đăng Nhập</h2>
+    <form method="post" class="form-inline justify-content-center">
+        {% csrf_token %}
+        <div class="form-group mb-2">
+            <label for="username" class="sr-only">Tên đăng nhập</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Tên đăng nhập" required>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="password" class="sr-only">Mật khẩu</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Mật khẩu" required>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Đăng Nhập</button>
+    </form>
+    {% if error %}
+        <div class="alert alert-danger mt-3" role="alert">{{ error }}</div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% include 'products/footer.html' %}

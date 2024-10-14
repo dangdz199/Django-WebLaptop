@@ -1,62 +1,93 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from .models import Laptop, Order, OrderItem, UserRegisterForm
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
-from .models import Laptop, Order, OrderItem
+def user_login(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Redirect đến trang chủ hoặc nơi bạn muốn
+        else:
+            return render(request, 'products/login.html', {'error': 'Tên đăng nhập hoặc mật khẩu không đúng.'})
+    return render(request, 'products/login.html')
 
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tài khoản của bạn đã được tạo thành công! Bạn có thể đăng nhập.')
+            return redirect('login')  # Redirect đến trang đăng nhập
+        else:
+            # Nếu biểu mẫu không hợp lệ, thông báo lỗi cho người dùng
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Lỗi tại {field}: {error}")
+
+    else:
+        form = UserRegisterForm()
+    
+    return render(request, 'products/register.html', {'form': form})
 
 def get_or_create_order(user):
     return Order.objects.get_or_create(user=user, completed=False)[0]
 
-
-def update_cart_item_quantity(order_item, quantity):
-    order_item.quantity = max(1, int(quantity))  # Đảm bảo số lượng không nhỏ hơn 1
-    order_item.save()
-
+def get_cart_item_count(request):
+    cart = request.session.get('cart', {})
+    return sum(item['quantity'] for item in cart.values())
 
 def add_to_cart(request, laptop_id):
-    laptop = get_object_or_404(Laptop, pk=laptop_id)
-    order = get_or_create_order(request.user)
+    laptop = get_object_or_404(Laptop, id=laptop_id)
+    cart = request.session.get('cart', {})
+    
+    if str(laptop.id) in cart:
+        cart[str(laptop.id)]['quantity'] += 1
+    else:
+        cart[str(laptop.id)] = {
+            'name': laptop.name,
+            'price': str(laptop.price),
+            'quantity': 1,
+            'image': laptop.image.url,  
+        }
+    request.session['cart'] = cart
+    return redirect('cart')
 
-    # Kiểm tra xem laptop đã có trong giỏ hàng chưa
-    order_item, created = OrderItem.objects.get_or_create(order=order, product=laptop)
-    if not created:
-        # Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng
-        order_item.quantity += 1
-        order_item.save()
+def view_cart(request):
+    cart = request.session.get('cart', {})
+    total_price = sum(float(item['price']) * item['quantity'] for item in cart.values())
+    
+    for item in cart.values():
+        item['total'] = float(item['price']) * item['quantity']
+    
+    return render(request, 'products/cart.html', {'cart': cart, 'total_price': total_price})
 
-    return redirect('laptop_detail', pk=laptop_id)
-
-
-def update_cart_item(request, item_id):
-    order_item = get_object_or_404(OrderItem, pk=item_id)
-
-    if request.method == "POST":
+def update_cart(request, laptop_id):
+    cart = request.session.get('cart', {})
+    
+    if str(laptop_id) in cart:
         quantity = request.POST.get('quantity', 1)
-        update_cart_item_quantity(order_item, quantity)
-
+        if int(quantity) <= 0:
+            del cart[str(laptop_id)]
+        else:
+            cart[str(laptop_id)]['quantity'] = int(quantity)
+    
+    request.session['cart'] = cart
     return redirect('cart')
 
-
-def remove_cart_item(request, item_id):
-    order_item = get_object_or_404(OrderItem, pk=item_id)
-    order_item.delete()  # Xóa sản phẩm khỏi giỏ hàng
+def remove_from_cart(request, laptop_id):
+    cart = request.session.get('cart', {})
+    
+    if str(laptop_id) in cart:
+        del cart[str(laptop_id)]
+    
+    request.session['cart'] = cart
     return redirect('cart')
-
-
-def cart_view(request):
-    order = get_or_create_order(request.user)
-    context = {
-        'order': order,
-    }
-    return render(request, 'products/cart.html', context)
-
-
-def orders(request):
-    order = get_or_create_order(request.user)
-    context = {
-        'order': order,
-    }
-    return render(request, 'products/orders.html', context)
 
 
 def laptop_list(request):
@@ -82,11 +113,8 @@ def laptop_list(request):
     elif sort_order == 'desc':
         laptops = laptops.order_by('-price')  # Giá giảm dần
 
-    cart_item_count = 0
-
     if request.user.is_authenticated:
         order = get_or_create_order(request.user)
-        cart_item_count = sum(item.quantity for item in order.items.all())
 
     return render(request, 'products/laptop_list.html', {
         'laptops': laptops,
@@ -94,21 +122,19 @@ def laptop_list(request):
         'min_price': min_price,
         'max_price': max_price,
         'sort_order': sort_order,
-        'cart_item_count': cart_item_count,
-    })
+        'cart_item_count': get_cart_item_count(request)
 
+    })
 
 def laptop_detail(request, pk):
     laptop = get_object_or_404(Laptop, pk=pk)
-    cart_item_count = 0
 
     if request.user.is_authenticated:
         order = get_or_create_order(request.user)
-        cart_item_count = sum(item.quantity for item in order.items.all())
 
     context = {
         'laptop': laptop,
-        'cart_item_count': cart_item_count,
+        'cart_item_count': get_cart_item_count(request)
     }
     return render(request, 'products/laptop_detail.html', context)
 
@@ -119,11 +145,10 @@ def index(request):
 
     if request.user.is_authenticated:
         order = get_or_create_order(request.user)
-        cart_item_count = sum(item.quantity for item in order.items.all())
 
     context = {
         'laptops': laptops,
-        'cart_item_count': cart_item_count,
+        'cart_item_count': get_cart_item_count(request)
     }
     return render(request, 'products/index.html', context)
 
@@ -133,23 +158,17 @@ def about(request):
 
     if request.user.is_authenticated:
         order = get_or_create_order(request.user)
-        cart_item_count = sum(item.quantity for item in order.items.all())
 
     context = {
-        'cart_item_count': cart_item_count,
+        'cart_item_count': get_cart_item_count(request)
     }
     return render(request, 'products/about.html', context)
 
-
-
 def contact(request):
-    cart_item_count = 0
-
     if request.user.is_authenticated:
         order = get_or_create_order(request.user)
-        cart_item_count = sum(item.quantity for item in order.items.all())
 
     context = {
-        'cart_item_count': cart_item_count,
+        'cart_item_count': get_cart_item_count(request)
     }
     return render(request, 'products/contact.html', context)

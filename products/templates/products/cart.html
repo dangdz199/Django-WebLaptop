@@ -1,51 +1,49 @@
 {% include 'products/header.html' %}
 
 <main class="container my-5">
-    <h2 class="text-center mb-4">Giỏ hàng của bạn</h2>
-    
-    <!-- Kiểm tra xem giỏ hàng có sản phẩm hay không -->
-    {% if order and order.items.all %}
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Sản phẩm</th>
-                <th>Số lượng</th>
-                <th>Giá</th>
-                <th>Tổng cộng</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in order.items.all %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>
-                    <form action="{% url 'update_cart_item' item.id %}" method="POST" class="form-inline">
-                        {% csrf_token %}
-                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control w-50">
-                        <button type="submit" class="btn btn-warning btn-sm ml-2"><i class="fas fa-edit"></i> Cập nhật</button>
-                    </form>
-                </td>
-                <td>{{ item.product.price }} VND</td>
-                <td>{{ item.get_total_price }} VND</td>
-                <td>
-                    <form action="{% url 'remove_cart_item' item.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Xóa</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="text-right">
-        <p><strong>Tổng cộng: {{ order.get_total_price }} VND</strong></p>
-        <a href="{% url 'orders' %}" class="btn btn-success"><i class="fas fa-check-circle"></i> Thanh toán</a>
-    </div>
-
+    <h1 class="mb-4 text-center">Giỏ hàng của bạn</h1>
+    {% if cart %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Tổng</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for laptop_id, item in cart.items %}
+                        <tr>
+                            <td>
+                                <img src="{{ item.image }}" alt="{{ item.name }}" width="100" class="img-thumbnail">
+                                {{ item.name }}
+                            </td>
+                            <td>
+                                <form action="{% url 'update_cart' laptop_id %}" method="POST" class="form-inline">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="0" class="form-control w-50">
+                                    <button type="submit" class="btn btn-warning btn-sm ml-2">Cập nhật</button>
+                                </form>
+                            </td>
+                            <td>{{ item.price|floatformat:0 }} VNĐ</td>
+                            <td>{{ item.total|floatformat:0 }} VNĐ</td>
+                            <td>
+                                <a href="{% url 'remove_from_cart' laptop_id %}" class="btn btn-danger btn-sm">Xóa</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <h2 class="mt-4 text-right">Tổng cộng: <strong>{{ total_price|floatformat:0 }} VNĐ</strong></h2>
+        <div class="text-right">
+            <a href="#" class="btn btn-success">Thanh toán</a>
+        </div>
     {% else %}
-    <p class="text-center">Giỏ hàng của bạn trống.</p>
+        <div class="alert alert-warning text-center" role="alert">Giỏ hàng trống.</div>
     {% endif %}
 </main>
 

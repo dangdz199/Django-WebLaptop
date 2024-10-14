@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 # Mô hình laptop
 class Laptop(models.Model):
@@ -68,3 +71,10 @@ class OrderItem(models.Model):
     def get_total_price(self):
         # Tính tổng giá trị của sản phẩm này
         return self.quantity * self.product.price
+
+class UserRegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
