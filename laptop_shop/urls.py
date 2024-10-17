@@ -8,8 +8,8 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='home'),  # Home page
-    path('contact', contact, name='contact'),  # Home page
-    path('about', about, name='about'),  # Home page
+    path('contact', contact, name='contact'), 
+    path('about', about, name='about'), 
     path('laptops/', laptop_list, name='laptop_list'),
     path('laptops/<int:pk>/', laptop_detail, name='laptop_detail'),  # URL for laptop detail
     path('cart/', view_cart, name='cart'),
@@ -19,6 +19,8 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('register/', register, name='register'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('order_confirmation/<int:order_id>/', order_confirmation, name='order_confirmation'),
+    path('checkout/', checkout, name='checkout'),
 ]
 
 # if settings.DEBUG:

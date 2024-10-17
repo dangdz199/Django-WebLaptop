@@ -29,10 +29,8 @@ def register(request):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"Lỗi tại {field}: {error}")
-
     else:
         form = UserRegisterForm()
-    
     return render(request, 'products/register.html', {'form': form})
 
 def get_or_create_order(user):
@@ -58,15 +56,6 @@ def add_to_cart(request, laptop_id):
     request.session['cart'] = cart
     return redirect('cart')
 
-def view_cart(request):
-    cart = request.session.get('cart', {})
-    total_price = sum(float(item['price']) * item['quantity'] for item in cart.values())
-    
-    for item in cart.values():
-        item['total'] = float(item['price']) * item['quantity']
-    
-    return render(request, 'products/cart.html', {'cart': cart, 'total_price': total_price})
-
 def update_cart(request, laptop_id):
     cart = request.session.get('cart', {})
     
@@ -89,6 +78,24 @@ def remove_from_cart(request, laptop_id):
     request.session['cart'] = cart
     return redirect('cart')
 
+def view_cart(request):
+    cart = request.session.get('cart', {})
+    total_price = sum(float(item['price']) * item['quantity'] for item in cart.values())
+    
+    for item in cart.values():
+        item['total'] = float(item['price']) * item['quantity']
+    
+    # Kiểm tra nếu người dùng đã đăng nhập và lấy hoặc tạo đơn hàng
+    if request.user.is_authenticated:
+        order = get_or_create_order(request.user)
+    else:
+        order = None
+
+    return render(request, 'products/cart.html', {
+        'cart': cart, 
+        'total_price': total_price,
+        'order': order  # Truyền đối tượng order vào context
+    })
 
 def laptop_list(request):
     laptops = Laptop.objects.all()
@@ -138,7 +145,6 @@ def laptop_detail(request, pk):
     }
     return render(request, 'products/laptop_detail.html', context)
 
-
 def index(request):
     cart_item_count = 0
     laptops = Laptop.objects.all()
@@ -151,7 +157,6 @@ def index(request):
         'cart_item_count': get_cart_item_count(request)
     }
     return render(request, 'products/index.html', context)
-
 
 def about(request):
     cart_item_count = 0
@@ -172,3 +177,54 @@ def contact(request):
         'cart_item_count': get_cart_item_count(request)
     }
     return render(request, 'products/contact.html', context)
+
+def order_confirmation(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order_items = order.items.all()  # Lấy tất cả các mục sản phẩm trong đơn hàng
+    return render(request, 'products/order_confirmation.html', {
+        'order': order,
+        'order_items': order_items,
+        'cart_item_count': get_cart_item_count(request)
+    })
+    
+from decimal import Decimal
+
+def checkout(request):
+    cart = request.session.get('cart', {})
+    total_price = Decimal('0.00')
+
+    for item in cart.values():
+        item_price = Decimal(str(item['price']))
+        item['total'] = item_price * item['quantity']
+        total_price += item['total']
+
+    if request.method == 'POST':
+        # Xử lý logic thanh toán tại đây
+        order = Order.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            customer_name=request.POST.get('customer_name'),
+            customer_email=request.POST.get('customer_email'),
+            customer_phone=request.POST.get('customer_phone'),
+            shipping_address=request.POST.get('shipping_address'),
+            completed=True
+        )
+
+        # Lưu các sản phẩm vào OrderItem
+        for laptop_id, item in cart.items():
+            OrderItem.objects.create(
+                order=order,
+                product_id=laptop_id,
+                quantity=item['quantity']
+            )
+
+        # Xóa giỏ hàng sau khi thanh toán
+        request.session['cart'] = {}
+
+        return redirect('order_confirmation', order_id=order.id)
+
+    return render(request, 'products/checkout.html', {
+        'cart': cart,
+        'total_price': total_price,
+        'cart_item_count': get_cart_item_count(request)
+    })
+

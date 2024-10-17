@@ -40,8 +40,12 @@
         </div>
         <h2 class="mt-4 text-right">Tổng cộng: <strong>{{ total_price|floatformat:0 }} VNĐ</strong></h2>
         <div class="text-right">
-            <a href="#" class="btn btn-success">Thanh toán</a>
-        </div>
+            {% if cart %}
+                <a href="{% url 'checkout' %}" class="btn btn-success">Thanh toán</a>
+            {% else %}
+                <p class="text-center">Giỏ hàng trống.</p>
+            {% endif %}
+        </div>        
     {% else %}
         <div class="alert alert-warning text-center" role="alert">Giỏ hàng trống.</div>
     {% endif %}

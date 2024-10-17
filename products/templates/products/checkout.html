@@ -1,0 +1,62 @@
+{% include 'products/header.html' %}
+
+<main class="container my-5">
+    <h2 class="text-center mb-4">Thông tin thanh toán</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Thông tin khách hàng</h4>
+                <div class="form-group">
+                    <label for="customer_name">Họ tên</label>
+                    <input type="text" name="customer_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer_email">Email</label>
+                    <input type="email" name="customer_email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer_phone">Số điện thoại</label>
+                    <input type="text" name="customer_phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="shipping_address">Địa chỉ giao hàng</label>
+                    <textarea name="shipping_address" class="form-control" rows="3" required></textarea>
+                </div>
+            </div>
+    
+            <!-- Hiển thị thông tin sản phẩm trong giỏ hàng -->
+            <div class="col-md-6">
+                <h4>Sản phẩm trong giỏ hàng</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Tổng cộng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item_key, item in cart.items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.price }} VNĐ</td>
+                            <td>{{ item.total }} VNĐ</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h4 class="text-right">Tổng cộng: <strong>{{ total_price }} VNĐ</strong></h4>
+            </div>
+        </div>
+    
+        <div class="text-right">
+            <button type="submit" class="btn btn-success">Tiếp tục</button>
+        </div>
+    </form>
+</main>
+
+{% include 'products/footer.html' %}
